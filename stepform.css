@@ -1,0 +1,92 @@
+/*
+A default CSS styling for the step-form, can be configured or neglected.
+*/
+
+:root {
+  --default-form-padding: 5px;
+  --default-form-border-color: #CECECE;
+  --default-form-button-color: #2d64d2;
+  --default-form-button-color-hover: #2552ac;
+  --default-form-button-color-active: #14316a;
+  --default-form-submit-color: #1bc72f;
+  --default-form-submit-color-hover: #169825;
+  --default-form-submit-color-active: #0e6919;
+}
+
+#stepform {
+  border: 1px solid var(--default-form-border-color);
+  border-radius: 3px;
+  width: 600px;
+  margin: auto;
+  box-shadow: 0px 10px 10px #A3A3A3;
+}
+
+#stepform .step {
+  padding: 20px;
+}
+
+#stepform input,textarea,select {
+  border-radius: 3px;
+  padding: var(--default-form-padding);
+  background-color: #FFF;
+  border: 1px solid var(--default-form-border-color);
+}
+
+#stepform button {
+  border-radius: 3px;
+  padding: 4px;
+  color: #FFF;
+  background-color: var(--default-form-button-color);
+  border: 2px solid var(--default-form-button-color);
+}
+
+#stepform input[type='submit'] {
+  border-radius: 3px;
+  padding: 4px;
+  color: #FFF;
+  background-color: var(--default-form-submit-color);
+  border: 2px solid var(--default-form-submit-color);
+}
+
+#stepform input[type='text'] {
+  border: 1px solid var(--default-form-border-color);
+}
+
+#stepform [type='submit']:hover {
+  cursor: pointer;
+  background-color: var(--default-form-submit-color-hover);
+}
+
+#stepform button:hover {
+  cursor: pointer;
+  background-color: var(--default-form-button-color-hover);
+}
+
+#stepform [type='submit']:active {
+  cursor: pointer;
+  background-color: var(--default-form-submit-color-active);
+  color: #FFF;
+}
+
+#stepform button:active {
+  cursor: pointer;
+  background-color: var(--default-form-button-color-active);
+  color: #FFF;
+}
+
+#stepform .status-field {
+  border-bottom: 1px solid var(--default-form-border-color);
+  padding: 10px;
+}
+
+#stepform .status-field canvas {
+  height: 50px;
+}
+
+#stepform .button-wrapper {
+  margin-top: 20px;
+}
+
+#stepform .button-wrapper button {
+  margin-right: 10px;
+}
