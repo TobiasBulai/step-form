@@ -37,35 +37,94 @@ const StepForm = class {
     let wrapper = document.createElement('div');
     wrapper.setAttribute('class', 'button-wrapper');
 
+    const ctx = this.#statusCanvas.getContext("2d");
+    const canvas = this.#statusCanvas;
+    const numberOfSteps = this.#numberOfSteps;
+
     if (index > 0) {
       step.style.display = 'none';
 
-      let nextButton = document.createElement('button');
-      nextButton.innerText = 'Back';
+      let button = document.createElement('button');
+      button.innerText = 'Back';
 
-      nextButton.addEventListener('click', function(event) {
+      const backEvent = function(event) {
         event.preventDefault();
         let nextStep = document.querySelectorAll('#stepform > form > div.step');
         nextStep[index-1].style.display = 'block';
         step.style.display = 'none';
-      });
 
-      wrapper.appendChild(nextButton);
+        var x = (canvas.width / numberOfSteps) / 2 - 35;
+        var xStart = x;
+        ctx.reset();
+
+        for (let i = 0; i < numberOfSteps; i++) {
+          ctx.fillStyle = "darkcyan";
+
+          if (i > 0) {
+            x = x + (canvas.width / numberOfSteps);
+          }
+
+          ctx.strokeStyle = "darkcyan";
+          ctx.beginPath();
+          ctx.roundRect(x, 1, 50, 50, [25]);
+          ctx.stroke();
+
+          if (i < index) {
+            ctx.fill();
+            ctx.strokeStyle = "darkcyan";
+            ctx.beginPath();
+            ctx.moveTo(xStart, 25);
+            ctx.lineTo(x, 25);
+            ctx.stroke();
+          }
+        }
+      }
+
+      button.addEventListener('click', backEvent);
+
+      wrapper.appendChild(button);
       step.appendChild(wrapper);
     }
 
     if (index < this.#numberOfSteps - 1) {
-      let nextButton = document.createElement('button');
-      nextButton.innerText = 'Next';
+      let button = document.createElement('button');
+      button.innerText = 'Next';
 
-      nextButton.addEventListener('click', function(event) {
+      const nextEvent = function(event) {
         event.preventDefault();
         let nextStep = document.querySelectorAll('#stepform > form > div.step');
         nextStep[index+1].style.display = 'block';
         step.style.display = 'none';
-      });
 
-      wrapper.appendChild(nextButton);
+        var x = (canvas.width / numberOfSteps) / 2 - 35;
+        var xStart = x;
+
+        for (let i = 0; i < numberOfSteps; i++) {
+          ctx.fillStyle = "darkcyan";
+
+          if (i > 0) {
+            x = x + (canvas.width / numberOfSteps);
+          }
+
+          ctx.strokeStyle = "darkcyan";
+          ctx.beginPath();
+          ctx.roundRect(x, 1, 50, 50, [25]);
+          ctx.stroke();
+
+          if (index+1 == i) {
+            ctx.fill();
+            ctx.strokeStyle = "darkcyan";
+            ctx.beginPath();
+            ctx.moveTo(xStart, 25);
+            ctx.lineTo(x, 25);
+            ctx.stroke();
+          }
+        }
+      };
+
+      button.addEventListener('click', nextEvent);
+
+      wrapper.appendChild(button);
       step.appendChild(wrapper);
     }
 
@@ -87,35 +146,39 @@ const StepForm = class {
   #buildStatusField(stepform) {
     let statusField = document.createElement('div');
     let statusCanvas = document.createElement('canvas');
+
     this.#statusCanvas = statusCanvas;
 
     statusField.setAttribute('class', 'status-field');
 
-    statusField.append(statusCanvas);
     stepform.prepend(statusField);
 
-    const ctx = this.#statusCanvas.getContext("2d");
-    for (let i = 1; i <= this.#numberOfSteps; i++) {
+    statusField = document.getElementsByClassName('status-field')[0];
+    statusCanvas.setAttribute('height', 52);
+    statusCanvas.setAttribute('width', statusField.clientWidth);
+    statusField.appendChild(statusCanvas)
 
+    const ctx = this.#statusCanvas.getContext("2d");
+    var x = (this.#statusCanvas.width / this.#numberOfSteps) / 2 - 35;
+    var xStart = x;
+
+    for (let i = 1; i <= this.#numberOfSteps; i++) {
       ctx.fillStyle = "darkcyan";
 
-      // console.log(this.#statusCanvas.width / this.#numberOfSteps)
-      let x = (i == 1)
-        ? 25
-        : i * (this.#statusCanvas.width / this.#numberOfSteps);
+      if (i > 1) {
+        x = x + (this.#statusCanvas.width / this.#numberOfSteps);
+      }
 
-      // console.log(x)
+      ctx.strokeStyle = "darkcyan";
+      ctx.beginPath();
+      ctx.roundRect(x, 1, 50, 50, [25]);
+      ctx.stroke();
 
-      ctx.fillRect(x, 25, 100, 100);
+      if (i == 1) {
+        ctx.fill();
+      }
     }
 
     return statusCanvas;
-  }
-
-  #renderProgress(progress)
-  {
-    const ctx = this.#statusCanvas.getContext("2d");
-    ctx.fillStyle = "darkcyan";
-    ctx.fillRect(25, 25, 100, 100);
   }
 };
