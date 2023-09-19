@@ -11,6 +11,8 @@ A default CSS styling for the step-form, can be configured or neglected.
   --default-form-submit-color: #1bc72f;
   --default-form-submit-color-hover: #169825;
   --default-form-submit-color-active: #0e6919;
+  --default-header-alignment: center;
+  --default-header-background: linear-gradient(#FFF, #EFEFEF);
 }
 
 #stepform {
@@ -19,10 +21,6 @@ A default CSS styling for the step-form, can be configured or neglected.
   width: 600px;
   margin: auto;
   box-shadow: 0px 10px 10px #A3A3A3;
-}
-
-#stepform .step {
-  padding: 20px;
 }
 
 #stepform input,textarea,select {
@@ -75,7 +73,7 @@ A default CSS styling for the step-form, can be configured or neglected.
 }
 
 #stepform .status-field {
-  border-bottom: 1px solid var(--default-form-border-color);
+  border-top: 1px solid var(--default-form-border-color);
   padding: 10px;
 }
 
@@ -89,4 +87,19 @@ A default CSS styling for the step-form, can be configured or neglected.
 
 #stepform .button-wrapper button {
   margin-right: 10px;
+}
+
+#stepform .step .step-header {
+  border-bottom: 1px solid var(--default-form-border-color);
+  background: var(--default-header-background);
+  text-align: var(--default-header-alignment);
+  padding: 5px 20px 5px 20px;
+}
+
+#stepform .step .step-header p {
+  font-weight: 700;
+}
+
+#stepform .step .step-content {
+  padding: 20px;
 }

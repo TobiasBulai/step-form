@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Step Form Demo</title>
   <style>
     body {
       font-family: Arial, Helvetica, sans-serif;
@@ -17,30 +17,99 @@
   <link href="stepform.css" type="text/css" rel="stylesheet">
 </head>
 <body>
-  <h3>Steps</h3>
+  <h3>Step Form Demo</h3>
   <div id="stepform">
-    <form>
-      <div class="step">
+    <div class="step">
+      <div class="step-header">
+        <p>Name of employee</p>
+      </div>
+      <div class="step-content">
         <input type="text" name="firstname" placeholder="Firstname">
         <input type="text" name="lastname" placeholder="Lastname">
       </div>
-      <div class="step">
+    </div>
+    <div class="step">
+      <div class="step-header">
+        <p>Position of employee</p>
+      </div>
+      <div class="step-content">
         <label for="employee">Employee position</label>
-        <select id="employee">
+        <select id="employee" name="job">
           <option value="1">Doctor</option>
           <option value="2">Nurse</option>
           <option value="3">Janitor</option>
         </select>
       </div>
-    </form>
+    </div>
+    <div class="step">
+      <div class="step-header">
+        <p>Hobbies</p>
+      </div>
+      <div class="step-content">
+        <input type="checkbox" name="hobby" value="1"> Dodgeball
+        <br/><input type="checkbox" name="hobby" value="2"> Football
+        <br/><input type="checkbox" name="hobby" value="3"> Chess
+        <br/><input type="checkbox" name="hobby" value="4"> Paragliding
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-header">
+        <p>Salary</p>
+      </div>
+      <div class="step-content">
+        <input type="number" name="salary" value="0" placeholder="Salary">
+        <select id="currency" name="currency">
+          <option>USD</option>
+          <option>EUR</option>
+          <option>ISK</option>
+          <option>SEK</option>
+          <option>NOK</option>
+          <option>DDK</option>
+        </select>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-header">
+        <p>Devices</p>
+      </div>
+      <div class="step-content">
+        <input type="checkbox" name="device" value="1"> PC
+        <br/><input type="checkbox" name="device" value="2"> Mac
+        <br/><input type="checkbox" name="device" value="3"> Headphones
+        <br/><input type="checkbox" name="device" value="4"> Cellphone
+      </div>
+    </div>
   </div>
   <script src="./StepForm.js"></script>
   <script>
     (new StepForm())
-      .setSubmitName("Create Employee")
-      .build(function(event) {
-        event.preventDefault();
-        console.log("Thing is posted!")
+      .setSubmitName("Create Emplyee")
+      .enableGraphicalStepCounter()
+      .build(function (event) {
+        event.preventDefault()
+        console.log("POSTING...")
+
+        const inputElements = document.getElementsByTagName('input');
+        const selectElements = document.getElementsByTagName('select');
+
+        for (const input of inputElements) {
+          if (!['submit', 'button'].includes(input.type)) {
+            if (input.type == 'checkbox') {
+              if (input.checked) {
+                console.log(input.name, input.value)
+              }
+            } else {
+              console.log(input.name, input.value)
+            }
+          }
+        }
+
+        for (const select of selectElements) {
+          const selected = select.options[select.selectedIndex];
+          console.log(select.name, `${selected.value} (${selected.innerText})`)
+        }
+
+        // Do something cool...
       });
   </script>
 </body>
