@@ -12,16 +12,16 @@ The header is not a **required** field, _**but**_ the `step-content` one is!
 <div id="stepform">
   <div class="step">
     <div class="step-header">
-        <!-- Some header -->
-      </div>
-      <div class="step-content">
-        <!-- Some content -->
-      </div>
+      <!-- Some header -->
     </div>
+    <div class="step-content">
+      <!-- Some content -->
+    </div>
+  </div>
   <div class="step">
     <div class="step-content">
-        <!-- Some content -->
-      </div>
+      <!-- Some content -->
+    </div>
   </div>
 </div>
 ```
