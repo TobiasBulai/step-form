@@ -1,16 +1,133 @@
+const STEP_NEXT = 1;
+const STEP_BACK = 2;
+
+const Cube = class
+{
+  width;
+  height;
+  radius;
+  yPos;
+
+  constructor(width, height, radius, yPos) {
+    this.width = width;
+    this.height = height;
+    this.radius = radius;
+    this.yPos = yPos;
+  }
+}
+
+const DrawEventHandler = class
+{
+    #ctx;
+    #canvas;
+    #numSteps;
+
+  /**
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {HTMLCanvasElement} canvas
+   * @param {number} numSteps
+   */
+  constructor(
+    ctx,
+    canvas,
+    numSteps
+  ) {
+    this.#ctx = ctx;
+    this.#canvas = canvas;
+    this.#numSteps = numSteps;
+  }
+
+  drawInit(cube)
+  {
+    var x = (this.#canvas.width / this.#numSteps) / 2 - cube.width / 3; //FIXME: this too
+
+    for (let i = 1; i <= this.#numSteps; i++) {
+      this.#ctx.fillStyle = "darkcyan";
+
+      if (i > 1) {
+        x = x + (this.#canvas.width / this.#numSteps);
+      }
+
+      this.#ctx.strokeStyle = "darkcyan";
+      this.#ctx.beginPath();
+      this.#ctx.roundRect(x, cube.yPos, cube.width, cube.height, cube.radius);
+
+      this.#ctx.stroke();
+
+      if (i == 1) {
+        this.#ctx.fill();
+      }
+    }
+  }
+
+  /**
+   *
+   * @param {number} buttonActionId
+   * @param {number} index
+   * @param {Cube} cube
+   */
+  drawStep(
+    buttonActionId,
+    index,
+    cube
+  ) {
+    //FIXME: This is really not optimal
+    var x = (this.#canvas.width / this.#numSteps) / 2 - cube.width / 3; //FIXME: this too
+    var xStart = x;
+
+    if (buttonActionId == STEP_BACK) {
+      this.#ctx.reset();
+    }
+
+    for (let cursor = 0; cursor < this.#numSteps; cursor++) {
+      this.#ctx.fillStyle = "darkcyan";
+
+      if (cursor > 0) {
+        x = x + (this.#canvas.width / this.#numSteps);
+      }
+
+      this.#ctx.strokeStyle = "darkcyan";
+      this.#ctx.beginPath();
+      this.#ctx.roundRect(x, cube.yPos, cube.width, cube.height, cube.radius);
+      this.#ctx.stroke();
+
+      if (buttonActionId == STEP_NEXT) {
+        if (index + 1 == cursor) {
+          this.#ctx.fill();
+          this.#ctx.strokeStyle = "darkcyan";
+          this.#ctx.beginPath();
+          this.#ctx.moveTo(xStart, cube.height / 2 + cube.yPos);
+          this.#ctx.lineTo(x, cube.height / 2 + cube.yPos);
+          this.#ctx.stroke();
+        }
+      }
+
+      if (buttonActionId == STEP_BACK) {
+        if (cursor < index) {
+          this.#ctx.fill();
+          this.#ctx.strokeStyle = "darkcyan";
+          this.#ctx.beginPath();
+          this.#ctx.moveTo(xStart, cube.height / 2 + cube.yPos);
+          this.#ctx.lineTo(x, cube.height / 2 + cube.yPos);
+          this.#ctx.stroke();
+        }
+      }
+    }
+  }
+};
+
+
 const StepForm = class {
-  #statusCanvas;
-  #numberOfSteps = 0;
+  #canvas;
+  #numSteps = 0;
   #stepList = [];
   #submitName = "Submit";
   #url = null;
   #formMethod = null;
   #isGraphicalStepCounterEnabled = false;
 
-  #cubeY = 15;
-  #cubeWidth = 25;
-  #cubeHeight = 25;
-  #cubeRadius = [15];
+  #cube = new Cube(25, 25, [15], 15);
 
   setSubmitName(submitName) {
     this.#submitName = submitName;
@@ -41,13 +158,11 @@ const StepForm = class {
     height,
     radius
   ) {
-    this.#cubeY = y;
-    this.#cubeWidth = width;
-    this.#cubeHeight = height;
-
-    if (Array.isArray(radius)) {
-      this.#cubeRadius = radius;
+    if (!Array.isArray(radius)) {
+      throw new Error("Radius has to be of type: Array<number>");
     }
+
+    this.#cube = new Cube(width, height, radius, y);
 
     return this;
   }
@@ -66,7 +181,7 @@ const StepForm = class {
     }
 
     this.#stepList = document.querySelectorAll('#stepform > form > div.step');
-    this.#numberOfSteps = this.#stepList.length;
+    this.#numSteps = this.#stepList.length;
 
     if (this.#isGraphicalStepCounterEnabled === true) {
       this.#buildStatusField(document.getElementById('stepform'));
@@ -104,15 +219,11 @@ const StepForm = class {
     let wrapper = document.createElement('div');
     wrapper.setAttribute('class', 'button-wrapper');
 
-    const ctx = (this.#isGraphicalStepCounterEnabled) ? this.#statusCanvas.getContext("2d") : null;
-    const canvas = (this.#isGraphicalStepCounterEnabled) ? this.#statusCanvas : null;
-    const numberOfSteps = (this.#isGraphicalStepCounterEnabled) ? this.#numberOfSteps : null;
+    const ctx = (this.#isGraphicalStepCounterEnabled) ? this.#canvas.getContext("2d") : null;
+    const canvas = (this.#isGraphicalStepCounterEnabled) ? this.#canvas : null;
+    const numSteps = (this.#isGraphicalStepCounterEnabled) ? this.#numSteps : null;
     const isGraphicalStepCounterEnabled = this.#isGraphicalStepCounterEnabled;
-
-    const cubeY = this.#cubeY;
-    const cubeWidth = this.#cubeWidth;
-    const cubeHeight = this.#cubeHeight;
-    const cubeRadius = this.#cubeRadius;
+    const cube = this.#cube;
 
     if (index > 0) {
       step.style.display = 'none';
@@ -127,32 +238,8 @@ const StepForm = class {
         step.style.display = 'none';
 
         if (isGraphicalStepCounterEnabled === true) {
-          //FIXME: This is really not optimal
-          var x = (canvas.width / numberOfSteps) / 2 - cubeWidth / 3; //FIXME: this too
-          var xStart = x;
-          ctx.reset();
-
-          for (let i = 0; i < numberOfSteps; i++) {
-            ctx.fillStyle = "darkcyan";
-
-            if (i > 0) {
-              x = x + (canvas.width / numberOfSteps);
-            }
-
-            ctx.strokeStyle = "darkcyan";
-            ctx.beginPath();
-            ctx.roundRect(x, cubeY, cubeWidth, cubeHeight, cubeRadius);
-            ctx.stroke();
-
-            if (i < index) {
-              ctx.fill();
-              ctx.strokeStyle = "darkcyan";
-              ctx.beginPath();
-              ctx.moveTo(xStart, cubeHeight/2+cubeY);
-              ctx.lineTo(x, cubeHeight/2+cubeY);
-              ctx.stroke();
-            }
-          }
+          (new DrawEventHandler(ctx, canvas, numSteps))
+            .drawStep(STEP_BACK, index, cube);
         }
       }
 
@@ -160,7 +247,7 @@ const StepForm = class {
       wrapper.appendChild(button);
     }
 
-    if (index < this.#numberOfSteps - 1) {
+    if (index < this.#numSteps - 1) {
       let button = document.createElement('button');
       button.innerText = 'Next';
 
@@ -171,31 +258,8 @@ const StepForm = class {
         step.style.display = 'none';
 
         if (isGraphicalStepCounterEnabled === true) {
-          //FIXME: This is really not optimal
-          var x = (canvas.width / numberOfSteps) / 2 - cubeWidth / 3; //FIXME: this too
-          var xStart = x;
-
-          for (let i = 0; i < numberOfSteps; i++) {
-            ctx.fillStyle = "darkcyan";
-
-            if (i > 0) {
-              x = x + (canvas.width / numberOfSteps);
-            }
-
-            ctx.strokeStyle = "darkcyan";
-            ctx.beginPath();
-            ctx.roundRect(x, cubeY, cubeWidth, cubeHeight, cubeRadius);
-            ctx.stroke();
-
-            if (index+1 == i) {
-              ctx.fill();
-              ctx.strokeStyle = "darkcyan";
-              ctx.beginPath();
-              ctx.moveTo(xStart, cubeHeight/2+cubeY);
-              ctx.lineTo(x, cubeHeight/2+cubeY);
-              ctx.stroke();
-            }
-          }
+          (new DrawEventHandler(ctx, canvas, numSteps))
+            .drawStep(STEP_NEXT, index, cube);
         }
       };
 
@@ -203,7 +267,7 @@ const StepForm = class {
       wrapper.appendChild(button);
     }
 
-    if (index == this.#numberOfSteps - 1) {
+    if (index == this.#numSteps - 1) {
       let submitButton = document.createElement('input');
       submitButton.setAttribute('type', 'submit');
       submitButton.setAttribute('value', this.#submitName);
@@ -223,40 +287,20 @@ const StepForm = class {
    */
   #buildStatusField(stepform) {
     let statusField = document.createElement('div');
-    let statusCanvas = document.createElement('canvas');
-
-    this.#statusCanvas = statusCanvas;
+    let canvas = document.createElement('canvas');
 
     statusField.setAttribute('class', 'status-field');
 
     stepform.appendChild(statusField);
 
     statusField = document.getElementsByClassName('status-field')[0];
-    statusCanvas.setAttribute('height', 52);
-    statusCanvas.setAttribute('width', statusField.clientWidth);
-    statusField.appendChild(statusCanvas)
+    canvas.setAttribute('height', 52);
+    canvas.setAttribute('width', statusField.clientWidth);
+    statusField.appendChild(canvas);
 
-    const ctx = this.#statusCanvas.getContext("2d");
-    var x = (this.#statusCanvas.width / this.#numberOfSteps) / 2 - this.#cubeWidth / 3; //FIXME: this too
+    this.#canvas = canvas;
 
-    for (let i = 1; i <= this.#numberOfSteps; i++) {
-      ctx.fillStyle = "darkcyan";
-
-      if (i > 1) {
-        x = x + (this.#statusCanvas.width / this.#numberOfSteps);
-      }
-
-      ctx.strokeStyle = "darkcyan";
-      ctx.beginPath();
-      ctx.roundRect(x, this.#cubeY, this.#cubeWidth, this.#cubeHeight, this.#cubeRadius);
-
-      ctx.stroke();
-
-      if (i == 1) {
-        ctx.fill();
-      }
-    }
-
-    return statusCanvas;
+    (new DrawEventHandler(this.#canvas.getContext("2d"), this.#canvas, this.#numSteps))
+      .drawInit(this.#cube);
   }
 };
