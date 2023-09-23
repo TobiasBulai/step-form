@@ -89,17 +89,17 @@ A default CSS styling for the step-form, can be configured or neglected.
   margin-right: 10px;
 }
 
-#stepform .step .step-header {
+#stepform .step.header {
   border-bottom: 1px solid var(--default-form-border-color);
   background: var(--default-header-background);
   text-align: var(--default-header-alignment);
   padding: 5px 20px 5px 20px;
 }
 
-#stepform .step .step-header p {
+#stepform .step.header p {
   font-weight: 700;
 }
 
-#stepform .step .step-content {
+#stepform .step.content {
   padding: 20px;
 }

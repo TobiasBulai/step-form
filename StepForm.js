@@ -205,7 +205,7 @@ const StepForm = class {
       form.setAttribute('action', this.#url);
     }
 
-    document.querySelectorAll('#stepform div.step').forEach((step) => {
+    document.querySelectorAll('#stepform div.step:not(.header, .content)').forEach((step) => {
       form.appendChild(step)
     });
     document.getElementById('stepform').prepend(form);
@@ -276,7 +276,7 @@ const StepForm = class {
       step.appendChild(wrapper);
     }
 
-    const lastStepInBlock = step.querySelectorAll('div.step-content');
+    const lastStepInBlock = step.querySelectorAll('div.step.content');
     lastStepInBlock[lastStepInBlock.length-1].appendChild(wrapper);
   }
 

@@ -6,20 +6,20 @@ A simple HTML/Javascript structure that builds an interactible form with a step-
 
 
 ## Required HTML format
-The header is not a **required** field, _**but**_ the `step-content` one is!
+The header is not a **required** field, _**but**_ the `step content` one is!
 
 ```html
 <div id="stepform">
   <div class="step">
-    <div class="step-header">
+    <div class="step header">
       <!-- Some header -->
     </div>
-    <div class="step-content">
+    <div class="step content">
       <!-- Some content -->
     </div>
   </div>
   <div class="step">
-    <div class="step-content">
+    <div class="step content">
       <!-- Some content -->
     </div>
   </div>
@@ -35,19 +35,19 @@ To enable the above HTML to use the step-form, you simply need to add the follow
 ```html
 <div id="stepform">
   <div class="step">
-    <div class="step-header">
+    <div class="step header">
       <p>Name of employee</p>
     </div>
-    <div class="step-content">
+    <div class="step content">
       <input type="text" name="firstname" placeholder="Firstname">
       <input type="text" name="lastname" placeholder="Lastname">
     </div>
   </div>
   <div class="step">
-    <div class="step-header">
+    <div class="step header">
       <p>Position of employee</p>
     </div>
-    <div class="step-content">
+    <div class="step content">
       <label for="employee">Employee position</label>
       <select id="employee">
         <option value="1">Doctor</option>
