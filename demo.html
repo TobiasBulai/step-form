@@ -13,8 +13,12 @@
       text-align: center;
       margin-bottom: 20px;
     }
+
+    #stepform {
+      margin: auto;
+    }
   </style>
-  <link href="stepform.css" type="text/css" rel="stylesheet">
+  <link href="./dist/stepform.css" type="text/css" rel="stylesheet">
 </head>
 <body>
   <h3>Step Form Demo</h3>
@@ -80,9 +84,10 @@
       </div>
     </div>
   </div>
-  <script src="./StepForm.js"></script>
+  <script src="./dist/StepForm.js"></script>
   <script>
     (new StepForm())
+      .setWidth('600px')
       .setSubmitName("Create Emplyee")
       .enableGraphicalStepCounter()
       .build(function (event) {

@@ -40,7 +40,7 @@ const DrawEventHandler = class
 
   drawInit(cube)
   {
-    var x = (this.#canvas.width / this.#numSteps) / 2 - cube.width / 3; //FIXME: this too
+    var x = (this.#canvas.width / this.#numSteps) / this.#numSteps + cube.width;
 
     for (let i = 1; i <= this.#numSteps; i++) {
       this.#ctx.fillStyle = "darkcyan";
@@ -72,8 +72,7 @@ const DrawEventHandler = class
     index,
     cube
   ) {
-    //FIXME: This is really not optimal
-    var x = (this.#canvas.width / this.#numSteps) / 2 - cube.width / 3; //FIXME: this too
+    var x = (this.#canvas.width / this.#numSteps) / this.#numSteps + cube.width;
     var xStart = x;
 
     if (buttonActionId == STEP_BACK) {
@@ -126,8 +125,22 @@ const StepForm = class {
   #url = null;
   #formMethod = null;
   #isGraphicalStepCounterEnabled = false;
+  #formWidth = 'auto';
+  #formHeight = 'auto';
 
   #cube = new Cube(25, 25, [15], 15);
+
+  setWidth(width)
+  {
+    this.#formWidth = (width == null) ? this.#formWidth : width;
+    return this;
+  }
+
+  // setHeight(height)
+  // {
+  //   this.#formHeight = (height == null) ? this.#formHeight : height;
+  //   return this;
+  // }
 
   setSubmitName(submitName) {
     this.#submitName = submitName;
@@ -159,8 +172,14 @@ const StepForm = class {
     radius
   ) {
     if (!Array.isArray(radius)) {
-      throw new Error("Radius has to be of type: Array<number>");
+      throw new Error('Radius has to be of type: Array<number>');
     }
+
+    [y, width, height].forEach((number, index) => {
+      if (!Number.isInteger(number)) {
+        throw new Error(`Parameter #${index} (${number}) is not a number`);
+      }
+    })
 
     this.#cube = new Cube(width, height, radius, y);
 
@@ -172,6 +191,7 @@ const StepForm = class {
    * @param {CallableFunction} callback
    */
   build(callback, onEvent) {
+    this.#configureFormWrapper();
     this.#buildForm();
 
     if (callback !== undefined) {
@@ -209,6 +229,13 @@ const StepForm = class {
       form.appendChild(step)
     });
     document.getElementById('stepform').prepend(form);
+  }
+
+  #configureFormWrapper()
+  {
+    const stepForm = document.getElementById('stepform');
+    stepForm.style.width = this.#formWidth;
+    stepForm.style.height = this.#formHeight;
   }
 
   /**
