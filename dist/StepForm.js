@@ -1,5 +1,5 @@
-const STEP_NEXT = 1;
-const STEP_BACK = 2;
+const FORM_STEP_NEXT = 1;
+const FORM_STEP_BACK = 2;
 
 const Cube = class
 {
@@ -8,6 +8,13 @@ const Cube = class
   radius;
   yPos;
 
+  /**
+   *
+   * @param {number} width
+   * @param {number} height
+   * @param {Array<number>} radius
+   * @param {number} yPos
+   */
   constructor(width, height, radius, yPos) {
     this.width = width;
     this.height = height;
@@ -38,27 +45,45 @@ const DrawEventHandler = class
     this.#numSteps = numSteps;
   }
 
+  /**
+   *
+   * @param {Cube} cube
+   */
   drawInit(cube)
   {
-    var x = (this.#canvas.width / this.#numSteps) / this.#numSteps + cube.width;
+    let x = 0;
+    let spacing = this.#calculateSpacing(cube);
 
     for (let i = 1; i <= this.#numSteps; i++) {
       this.#ctx.fillStyle = "darkcyan";
 
+      x += spacing;
+
       if (i > 1) {
-        x = x + (this.#canvas.width / this.#numSteps);
+        x += cube.width;
       }
 
       this.#ctx.strokeStyle = "darkcyan";
       this.#ctx.beginPath();
       this.#ctx.roundRect(x, cube.yPos, cube.width, cube.height, cube.radius);
-
       this.#ctx.stroke();
 
       if (i == 1) {
         this.#ctx.fill();
       }
     }
+  }
+
+  /**
+   *
+   * @param {Cube} cube
+   * @returns {number} spacing
+   */
+  #calculateSpacing(cube)
+  {
+    let totalWidthOfCubes = cube.width * (this.#numSteps);
+    let spaceLeft = this.#canvas.width - totalWidthOfCubes;
+    return (spaceLeft / (this.#numSteps + 1));
   }
 
   /**
@@ -72,18 +97,20 @@ const DrawEventHandler = class
     index,
     cube
   ) {
-    var x = (this.#canvas.width / this.#numSteps) / this.#numSteps + cube.width;
-    var xStart = x;
+    let x = 0;
+    let spacing = this.#calculateSpacing(cube);
 
-    if (buttonActionId == STEP_BACK) {
+    if (buttonActionId == FORM_STEP_BACK) {
       this.#ctx.reset();
     }
 
     for (let cursor = 0; cursor < this.#numSteps; cursor++) {
       this.#ctx.fillStyle = "darkcyan";
 
+      x += spacing;
+
       if (cursor > 0) {
-        x = x + (this.#canvas.width / this.#numSteps);
+        x += cube.width;
       }
 
       this.#ctx.strokeStyle = "darkcyan";
@@ -91,23 +118,23 @@ const DrawEventHandler = class
       this.#ctx.roundRect(x, cube.yPos, cube.width, cube.height, cube.radius);
       this.#ctx.stroke();
 
-      if (buttonActionId == STEP_NEXT) {
+      if (buttonActionId == FORM_STEP_NEXT) {
         if (index + 1 == cursor) {
           this.#ctx.fill();
           this.#ctx.strokeStyle = "darkcyan";
           this.#ctx.beginPath();
-          this.#ctx.moveTo(xStart, cube.height / 2 + cube.yPos);
+          this.#ctx.moveTo(spacing, cube.height / 2 + cube.yPos);
           this.#ctx.lineTo(x, cube.height / 2 + cube.yPos);
           this.#ctx.stroke();
         }
       }
 
-      if (buttonActionId == STEP_BACK) {
+      if (buttonActionId == FORM_STEP_BACK) {
         if (cursor < index) {
           this.#ctx.fill();
           this.#ctx.strokeStyle = "darkcyan";
           this.#ctx.beginPath();
-          this.#ctx.moveTo(xStart, cube.height / 2 + cube.yPos);
+          this.#ctx.moveTo(spacing, cube.height / 2 + cube.yPos);
           this.#ctx.lineTo(x, cube.height / 2 + cube.yPos);
           this.#ctx.stroke();
         }
@@ -119,34 +146,52 @@ const DrawEventHandler = class
 
 const StepForm = class {
   #canvas;
-  #numSteps = 0;
-  #stepList = [];
-  #submitName = "Submit";
-  #url = null;
-  #formMethod = null;
-  #isGraphicalStepCounterEnabled = false;
-  #formWidth = 'auto';
-  #formHeight = 'auto';
+  #numSteps;
+  #stepList;
+  #submitName;
+  #url;
+  #formMethod;
+  #isGraphicalStepCounterEnabled;
+  #formWidth;
+  #formHeight;
+  #cube;
 
-  #cube = new Cube(25, 25, [15], 15);
+  constructor() {
+    this.#cube = new Cube(25, 25, [13], 13)
+    this.#numSteps = 0;
+    this.#stepList = [];
+    this.#submitName = "Submit";
+    this.#url = null;
+    this.#formMethod = null;
+    this.#isGraphicalStepCounterEnabled = false;
+    this.#formWidth = 'auto';
+    this.#formHeight = 'auto';
+  }
 
+  /**
+   *
+   * @param {number} width
+   */
   setWidth(width)
   {
     this.#formWidth = (width == null) ? this.#formWidth : width;
     return this;
   }
 
-  // setHeight(height)
-  // {
-  //   this.#formHeight = (height == null) ? this.#formHeight : height;
-  //   return this;
-  // }
-
+  /**
+   *
+   * @param {string} submitName
+   */
   setSubmitName(submitName) {
     this.#submitName = submitName;
     return this;
   }
 
+  /**
+   *
+   * @param {string} method
+   * @param {string} url
+   */
   setFormMethod(method, url) {
     this.#url = url;
     this.#formMethod = method;
@@ -160,28 +205,32 @@ const StepForm = class {
 
   /**
    *
-   * @param {number} y position
    * @param {number} width
    * @param {number} height
    * @param {Array<number>} radius
    */
   setStepCounterSize(
-    y,
     width,
     height,
     radius
   ) {
     if (!Array.isArray(radius)) {
-      throw new Error('Radius has to be of type: Array<number>');
+      radius = null;
+    } else {
+      radius.forEach((radii, index) => {
+        if (!Number.isSafeInteger(radii)) {
+          throw new Error(`Radius #${index} (${radii}) is not a number or float`);
+        }
+      });
     }
 
-    [y, width, height].forEach((number, index) => {
+    [width, height].forEach((number, index) => {
       if (!Number.isInteger(number)) {
         throw new Error(`Parameter #${index} (${number}) is not a number`);
       }
     })
 
-    this.#cube = new Cube(width, height, radius, y);
+    this.#cube = new Cube(width, height, radius, Math.ceil(width/2));
 
     return this;
   }
@@ -266,7 +315,7 @@ const StepForm = class {
 
         if (isGraphicalStepCounterEnabled === true) {
           (new DrawEventHandler(ctx, canvas, numSteps))
-            .drawStep(STEP_BACK, index, cube);
+            .drawStep(FORM_STEP_BACK, index, cube);
         }
       }
 
@@ -286,7 +335,7 @@ const StepForm = class {
 
         if (isGraphicalStepCounterEnabled === true) {
           (new DrawEventHandler(ctx, canvas, numSteps))
-            .drawStep(STEP_NEXT, index, cube);
+            .drawStep(FORM_STEP_NEXT, index, cube);
         }
       };
 

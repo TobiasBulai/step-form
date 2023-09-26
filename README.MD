@@ -105,10 +105,9 @@ stepForm.enableGraphicalStepCounter();
   To tweak the graphical step-counter size (WARNING, this could break things), use the following
 */
 stepForm.setStepCounterSize(
-  y: number,
   width: number,
   height: number,
-  [radius]: array
+  radius: Array<number|float>
 );
 
 ```
