@@ -230,7 +230,7 @@ const StepForm = class {
       }
     })
 
-    this.#cube = new Cube(width, height, radius, Math.ceil(width/2));
+    this.#cube = new Cube(width, height, radius, Math.ceil(height/2));
 
     return this;
   }
