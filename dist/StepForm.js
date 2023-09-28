@@ -183,6 +183,7 @@ const StepForm = class {
    * @param {string} unit
    */
   setWidth(width, unit) {
+    unit = (unit == null) ? 'px' : unit;
     this.#formWidth = (width == null) ? this.#formWidth : `${width}${unit}`;
     return this;
   }
@@ -193,6 +194,7 @@ const StepForm = class {
    * @param {string} unit
    */
   setHeight(height, unit) {
+    unit = (unit == null) ? 'px' : unit;
     this.#formHeight = (height == null) ? this.#formHeight : `${height}${unit}`;
     return this;
   }
