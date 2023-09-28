@@ -7,7 +7,7 @@ Both are optional but only one can be displayed at a time. If both are enabled t
 
 
 ## Required HTML format
-The header is not a **required** field, _**but**_ the `step content` one is!
+The header `<div class="step header">` is not a **required** element, _**but**_ the `<div class="step content">` one is!
 
 ```html
 <div id="stepform">
