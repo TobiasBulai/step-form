@@ -152,9 +152,11 @@ const StepForm = class {
   #url;
   #formMethod;
   #isGraphicalStepCounterEnabled;
+  #isBasicStepCounter;
   #formWidth;
   #formHeight;
   #cube;
+  #stepFormElement;
 
   constructor() {
     this.#cube = new Cube(25, 25, [13], 13)
@@ -164,8 +166,15 @@ const StepForm = class {
     this.#url = null;
     this.#formMethod = null;
     this.#isGraphicalStepCounterEnabled = false;
+    this.#isBasicStepCounter = false;
     this.#formWidth = 'auto';
     this.#formHeight = 'auto';
+
+    if (document.getElementById('stepform') !== null) {
+      this.#stepFormElement = document.getElementById('stepform');
+    } else {
+      throw new Error('Element with ID "stepform" must exist!');
+    }
   }
 
   /**
@@ -200,6 +209,12 @@ const StepForm = class {
 
   enableGraphicalStepCounter() {
     this.#isGraphicalStepCounterEnabled = true;
+    return this;
+  }
+
+  enableBasicStepCounter()
+  {
+    this.#isBasicStepCounter = true;
     return this;
   }
 
@@ -252,8 +267,16 @@ const StepForm = class {
     this.#stepList = document.querySelectorAll('#stepform > form > div.step');
     this.#numSteps = this.#stepList.length;
 
-    if (this.#isGraphicalStepCounterEnabled === true) {
-      this.#buildStatusField(document.getElementById('stepform'));
+    if (this.#isGraphicalStepCounterEnabled && this.#isBasicStepCounter) {
+      this.#buildBasicStatusField();
+    } else {
+      if (this.#isGraphicalStepCounterEnabled) {
+        this.#buildStatusField();
+      }
+
+      if (this.#isBasicStepCounter) {
+        this.#buildBasicStatusField();
+      }
     }
 
     this.#stepList.forEach((step, index) => {
@@ -295,11 +318,20 @@ const StepForm = class {
     let wrapper = document.createElement('div');
     wrapper.setAttribute('class', 'button-wrapper');
 
-    const ctx = (this.#isGraphicalStepCounterEnabled) ? this.#canvas.getContext("2d") : null;
-    const canvas = (this.#isGraphicalStepCounterEnabled) ? this.#canvas : null;
-    const numSteps = (this.#isGraphicalStepCounterEnabled) ? this.#numSteps : null;
+    const ctx = (this.#canvas !== undefined) ? this.#canvas.getContext("2d") : null;
+    const canvas = (this.#canvas !== undefined) ? this.#canvas : null;
+    const numSteps = this.#numSteps;
     const isGraphicalStepCounterEnabled = this.#isGraphicalStepCounterEnabled;
+    const isBasicStepCounterEnabled = this.#isBasicStepCounter;
     const cube = this.#cube;
+
+    const updateBasicStepCounter = function(stepIndex, numSteps) {
+      let textElement = document.querySelector('div.status-field-basic p');
+
+      if (textElement !== null) {
+        textElement.innerText = `Page ${stepIndex} / ${numSteps}`;
+      }
+    }
 
     if (index > 0) {
       step.style.display = 'none';
@@ -313,9 +345,19 @@ const StepForm = class {
         nextStep[index-1].style.display = 'block';
         step.style.display = 'none';
 
-        if (isGraphicalStepCounterEnabled === true) {
-          (new DrawEventHandler(ctx, canvas, numSteps))
-            .drawStep(FORM_STEP_BACK, index, cube);
+        if (isGraphicalStepCounterEnabled && isBasicStepCounterEnabled) {
+          if (isBasicStepCounterEnabled) {
+            updateBasicStepCounter(index, numSteps);
+          }
+        } else {
+          if (isGraphicalStepCounterEnabled) {
+            (new DrawEventHandler(ctx, canvas, numSteps))
+              .drawStep(FORM_STEP_BACK, index, cube);
+          }
+
+          if (isBasicStepCounterEnabled) {
+            updateBasicStepCounter(index, numSteps);
+          }
         }
       }
 
@@ -333,9 +375,20 @@ const StepForm = class {
         nextStep[index+1].style.display = 'block';
         step.style.display = 'none';
 
-        if (isGraphicalStepCounterEnabled === true) {
-          (new DrawEventHandler(ctx, canvas, numSteps))
-            .drawStep(FORM_STEP_NEXT, index, cube);
+
+        if (isGraphicalStepCounterEnabled && isBasicStepCounterEnabled) {
+          if (isBasicStepCounterEnabled) {
+            updateBasicStepCounter(index+2, numSteps);
+          }
+        } else {
+          if (isGraphicalStepCounterEnabled) {
+            (new DrawEventHandler(ctx, canvas, numSteps))
+              .drawStep(FORM_STEP_NEXT, index, cube);
+          }
+
+          if (isBasicStepCounterEnabled) {
+            updateBasicStepCounter(index+2, numSteps);
+          }
         }
       };
 
@@ -358,16 +411,13 @@ const StepForm = class {
 
   /**
    *
-   * @param {HTMLDivElement} stepform
    * @returns {HTMLCanvasElement}
    */
-  #buildStatusField(stepform) {
-    let statusField = document.createElement('div');
+  #buildStatusField() {
     let canvas = document.createElement('canvas');
+    let statusField = this.#createStatusFieldElement('status-field');
 
-    statusField.setAttribute('class', 'status-field');
-
-    stepform.appendChild(statusField);
+    this.#stepFormElement.appendChild(statusField);
 
     statusField = document.getElementsByClassName('status-field')[0];
     canvas.setAttribute('height', 52);
@@ -378,5 +428,28 @@ const StepForm = class {
 
     (new DrawEventHandler(this.#canvas.getContext("2d"), this.#canvas, this.#numSteps))
       .drawInit(this.#cube);
+  }
+
+  #buildBasicStatusField()
+  {
+    let statusField = this.#createStatusFieldElement('status-field-basic');
+    let textElement = document.createElement('p');
+
+    textElement.innerText = `Page 1 / ${this.#numSteps}`;
+    statusField.appendChild(textElement);
+
+    this.#stepFormElement.appendChild(statusField);
+  }
+
+  /**
+   *
+   * @returns {HTMLDivElement} statusField
+   */
+  #createStatusFieldElement(className)
+  {
+    let statusField = document.createElement('div');
+    statusField.setAttribute('class', className);
+
+    return statusField;
   }
 };

@@ -1,8 +1,9 @@
-A simple HTML/Javascript structure that builds an interactible form with a step-by-step setup.
+A simple HTML/Javascript structure that builds an interactive form with a step-by-step setup.
 
+The form features a regular page counter `enableBasicStepCounter()` or a graphical `enableGraphicalStepCounter()` one.
 
-# DISCLAIMER
-**This is a work-in-progress project. It is not finished!!**
+Both are optional but only one can be displayed at a time. If both are enabled then the StepForm will fall back to the regular step counter.
+
 
 
 ## Required HTML format

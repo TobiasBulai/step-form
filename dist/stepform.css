@@ -81,6 +81,10 @@ A default CSS styling for the StepForm, can be configured or neglected.
   height: 50px;
 }
 
+#stepform .status-field-basic {
+  text-align: center;
+}
+
 #stepform .button-wrapper {
   margin-top: 20px;
 }
