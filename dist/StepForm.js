@@ -180,10 +180,20 @@ const StepForm = class {
   /**
    *
    * @param {number} width
+   * @param {string} unit
    */
-  setWidth(width)
-  {
-    this.#formWidth = (width == null) ? this.#formWidth : width;
+  setWidth(width, unit) {
+    this.#formWidth = (width == null) ? this.#formWidth : `${width}${unit}`;
+    return this;
+  }
+
+  /**
+   * If the height is of a percental value, it will default to auto.
+   * @param {number} height
+   * @param {string} unit
+   */
+  setHeight(height, unit) {
+    this.#formHeight = (height == null) ? this.#formHeight : `${height}${unit}`;
     return this;
   }
 
@@ -282,6 +292,8 @@ const StepForm = class {
     this.#stepList.forEach((step, index) => {
       this.#buildStepPage(step, index);
     });
+
+    this.#configureHeightPostBuild();
   }
 
   #buildForm() {
@@ -307,7 +319,19 @@ const StepForm = class {
   {
     const stepForm = document.getElementById('stepform');
     stepForm.style.width = this.#formWidth;
-    stepForm.style.height = this.#formHeight;
+  }
+
+  #configureHeightPostBuild() {
+    if (
+      this.#formHeight != 'auto' && this.#formHeight.match(/^[0-9]\w+\%$/) == null
+      && (this.#isGraphicalStepCounterEnabled || this.#isBasicStepCounter)
+    ) {
+      //only one can and SHOULD be visible at a time
+      document.querySelectorAll('#stepform .status-field, .status-field-basic')[0]
+        .classList.add('bottom');
+    }
+
+    this.#stepFormElement.style.height = this.#formHeight;
   }
 
   /**

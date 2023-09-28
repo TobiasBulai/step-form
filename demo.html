@@ -87,12 +87,12 @@
   <script src="./dist/StepForm.js"></script>
   <script>
     (new StepForm())
-      .setWidth('600px')
-      .setSubmitName("Create Emplyee")
+      .setWidth(600, 'px')
+      .setSubmitName('Create Emplyee')
       .enableGraphicalStepCounter()
       .build(function (event) {
         event.preventDefault()
-        console.log("POSTING...")
+        console.log('POSTING...')
 
         const inputElements = document.getElementsByTagName('input');
         const selectElements = document.getElementsByTagName('select');

@@ -103,6 +103,17 @@ stepForm
 stepForm.enableGraphicalStepCounter();
 
 /*
+  To enable the more basic step-counter with only text, use the following
+*/
+stepForm.enableBasicStepCounter();
+
+/*
+  To set a defined width and height of the form, use the following
+*/
+stepForm.setWidth(600, 'px');
+stepForm.setHeight(500, 'px'); //percental values are not possible due to breaking flow
+
+/*
   To tweak the graphical step-counter size (WARNING, this could break things), use the following
 */
 stepForm.setStepCounterSize(
