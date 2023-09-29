@@ -91,9 +91,11 @@
       .setSubmitName('Create Emplyee')
       .enableGraphicalStepCounter()
       .build(function (event) {
-        event.preventDefault()
-        console.log('POSTING...')
+        // Do something cool
+        event.preventDefault();
+        console.log('POSTING...');
 
+        const form = document.querySelector('#stepform form');
         const inputElements = document.getElementsByTagName('input');
         const selectElements = document.getElementsByTagName('select');
 
@@ -101,20 +103,21 @@
           if (!['submit', 'button'].includes(input.type)) {
             if (input.type == 'checkbox') {
               if (input.checked) {
-                console.log(input.name, input.value)
+                console.log(input.name, input.value);
               }
             } else {
-              console.log(input.name, input.value)
+              console.log(input.name, input.value);
             }
           }
         }
 
         for (const select of selectElements) {
           const selected = select.options[select.selectedIndex];
-          console.log(select.name, `${selected.value} (${selected.innerText})`)
+          console.log(select.name, `${selected.value} (${selected.innerText})`);
         }
 
-        // Do something cool...
+        // Submit form
+        form.requestSubmit();
       });
   </script>
 </body>

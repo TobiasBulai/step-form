@@ -277,12 +277,6 @@ const StepForm = class {
     this.#configureFormWrapper();
     this.#buildForm();
 
-    if (callback !== undefined) {
-      onEvent = (onEvent !== undefined) ? onEvent : 'submit';
-      document.querySelector("#stepform form")
-        .addEventListener(onEvent, callback);
-    }
-
     this.#stepList = document.querySelectorAll('#stepform > form > div.step');
     this.#numSteps = this.#stepList.length;
 
@@ -301,6 +295,12 @@ const StepForm = class {
     this.#stepList.forEach((step, index) => {
       this.#buildStepPage(step, index);
     });
+
+    if (callback !== undefined) {
+      onEvent = (onEvent !== undefined) ? onEvent : 'click';
+      document.querySelector("#stepform form input[type='submit']")
+        .addEventListener(onEvent, callback);
+    }
 
     this.#configureHeightPostBuild();
   }
