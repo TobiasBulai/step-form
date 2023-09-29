@@ -157,9 +157,10 @@ const StepForm = class {
   #formHeight;
   #cube;
   #stepFormElement;
+  #stepFormRoofPadding;
 
   constructor() {
-    this.#cube = new Cube(25, 25, [13], 13)
+    this.#cube = new Cube(25, 25, [13], 14)
     this.#numSteps = 0;
     this.#stepList = [];
     this.#submitName = "Submit";
@@ -169,6 +170,7 @@ const StepForm = class {
     this.#isBasicStepCounter = false;
     this.#formWidth = 'auto';
     this.#formHeight = 'auto';
+    this.#stepFormRoofPadding = 30;
 
     if (document.getElementById('stepform') !== null) {
       this.#stepFormElement = document.getElementById('stepform');
@@ -257,7 +259,12 @@ const StepForm = class {
       }
     })
 
-    this.#cube = new Cube(width, height, radius, Math.ceil(height/2));
+    this.#cube = new Cube(
+      width,
+      height,
+      radius,
+      Math.ceil((height + this.#stepFormRoofPadding) / 2) - (height/2)
+    );
 
     return this;
   }
@@ -446,7 +453,7 @@ const StepForm = class {
     this.#stepFormElement.appendChild(statusField);
 
     statusField = document.getElementsByClassName('status-field')[0];
-    canvas.setAttribute('height', 52);
+    canvas.setAttribute('height', this.#cube.height + this.#stepFormRoofPadding);
     canvas.setAttribute('width', statusField.clientWidth);
     statusField.appendChild(canvas);
 

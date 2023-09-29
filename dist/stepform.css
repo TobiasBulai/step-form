@@ -86,10 +86,6 @@ A default CSS styling for the StepForm, can be configured or neglected.
   color: #A3A3A3;
 }
 
-#stepform .status-field canvas {
-  height: 50px;
-}
-
 #stepform .status-field-basic {
   text-align: center;
 }
