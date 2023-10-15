@@ -1,10 +1,12 @@
 A simple HTML/Javascript structure that builds an interactive form with a step-by-step setup.
 
+#### Basics
 The form features a regular page counter `enableBasicStepCounter()` or a graphical `enableGraphicalStepCounter()` one.
 
 Both are optional but only one can be displayed at a time. If both are enabled then the StepForm will fall back to the regular step counter.
 
-
+#### Styling
+The project comes with a bundled stylesheet. It's optional to use this; you can always write your own.
 
 ## Required HTML format
 The header `<div class="step header">` is not a **required** element, _**but**_ the `<div class="step content">` one is!
