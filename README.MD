@@ -1,5 +1,9 @@
 A simple HTML/Javascript structure that builds an interactive form with a step-by-step setup.
 
+#### Notes - version 1.1.0
+As of this version, the project has been converted to a Node project.
+If you want to use this repo locally or your project for some reason does not handle `export`/`import` modules - just remove the `export` from the stepform.js.
+
 #### Basics
 The form features a regular page counter `enableBasicStepCounter()` or a graphical `enableGraphicalStepCounter()` one.
 
